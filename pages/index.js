@@ -111,7 +111,7 @@ export default function Home() {
           {/* Clean Profile Photo */}
           <div className="w-48 h-48 md:w-56 md:h-56 rounded-full mb-8 md:mb-0 md:mr-12 flex-shrink-0 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden bg-zinc-100 dark:bg-zinc-900">
             <Image
-              src="/me.jpg"
+              src="/public/me.jpg"
               alt="Pragyan Yadav"
               width={256}
               height={256}

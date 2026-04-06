@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <title>pragyan&apos;s corner</title>
         <meta name="description" 
-        content="Pragyan Yadav | UConn student researching Physics and Computer Science. Interested in AI, simulations, solar physics, and philosophy." />
+        content="Pragyan Yadav | UConn student researching Physics and Computer Science. Interested in AI, physics, and philosophy." />
 
         <link rel="icon" href="icon.ico" />
       </Head>

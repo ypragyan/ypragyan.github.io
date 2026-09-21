@@ -1,6 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require("tailwindcss/defaultTheme");
 
+/**
+ * Helio design tokens
+ * -------------------
+ * Color:
+ *   helio  → Signal Green (#1E7A52) — primary brand color, nav/headlines/buttons
+ *   amber  → Solar Amber (#E8A03C) — secondary accent, use sparingly for ONE
+ *            spotlight number/highlight per section, never as a background
+ *   ink    → #122A22 — deep pine-charcoal, primary text & dark sections
+ *   paper  → #F7F6F1 — warm off-white, main background
+ *   mist   → #E4EBE5 — card / alternate-section background
+ *   navy   → #16324A — reserved for charts & data visualizations only
+ *
+ * Type:
+ *   font-display → Space Grotesk (headlines)
+ *   font-sans    → Inter (body copy, UI)
+ *   font-mono    → IBM Plex Mono (stats, labels, data — anything that reads
+ *                  like a forecast/sensor readout)
+ */
 module.exports = {
   darkMode: "class", // <-- Enables class-based toggling via <html class="dark">
   content: [
@@ -11,22 +29,36 @@ module.exports = {
     extend: {
       colors: {
         helio: {
-          50: "#ecfdf5",
-          100: "#d1fae5",
-          200: "#a7f3d0",
-          400: "#34d399",
-          500: "#10b981",
-          600: "#059669",
-          700: "#047857",
-          800: "#065f46",
+          50: "#EAF4EF",
+          100: "#D2E8DC",
+          200: "#A6D1BA",
+          300: "#7CBC9C",
+          400: "#4C9B76",
+          500: "#1E7A52",
+          600: "#186344",
+          700: "#124C35",
+          800: "#0D3626",
+          900: "#092619",
         },
-        slate: {
-          850: "#1a2332",
-          950: "#0f1419",
+        amber: {
+          50: "#FDF3E4",
+          100: "#FBE7C9",
+          200: "#F5CE93",
+          300: "#F0BD75",
+          400: "#EEB157",
+          500: "#E8A03C",
+          600: "#C97F23",
+          700: "#9C611C",
         },
+        ink: "#122A22",
+        paper: "#F7F6F1",
+        mist: "#E4EBE5",
+        navy: "#16324A",
       },
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
+        display: ['"Space Grotesk"', ...defaultTheme.fontFamily.sans],
+        mono: ['"IBM Plex Mono"', ...defaultTheme.fontFamily.mono],
       },
       animation: {
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",

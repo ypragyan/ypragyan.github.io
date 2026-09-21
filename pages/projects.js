@@ -2,7 +2,6 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { FaTimes, FaExternalLinkAlt } from "react-icons/fa";
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -93,7 +92,6 @@ export default function Projects() {
       tags: ["Computer Vision", "Algorithms", "Image Processing"],
       image: "/project/complex.png",
       linkText: "Wolfram Community Essay",
-      // link: "https://community.wolfram.com/",
     },
     {
       title: "Silicon Pixel Particle Detector Analysis",
@@ -171,7 +169,6 @@ export default function Projects() {
                 </div>
 
                 <div className="p-6 flex flex-col flex-grow">
-                  {/* Title Header matching the original blue style */}
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                       {project.subtitle}
@@ -221,7 +218,19 @@ export default function Projects() {
                         className="inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         <span>Link</span>
-                        <FaExternalLinkAlt className="text-[9px]" />
+                        <svg
+                          className="w-2.5 h-2.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
                       </a>
                     )}
                   </div>
@@ -263,7 +272,9 @@ export default function Projects() {
                   className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                   aria-label="Close"
                 >
-                  <FaTimes className="text-xs" />
+                  <svg className="w-3.5 h-3.5 stroke-current fill-none" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
 
@@ -337,7 +348,15 @@ export default function Projects() {
                       className="inline-flex items-center gap-1.5 text-xs font-mono text-blue-600 dark:text-blue-400 hover:underline font-medium"
                     >
                       <span>{selectedProject.linkText || "View Publication"}</span>
-                      <FaExternalLinkAlt className="text-[10px]" />
+                      <svg
+                        className="w-2.5 h-2.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
                     </a>
                   )}
                 </div>

@@ -6,13 +6,11 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>Helio — AI-Powered Energy Intelligence for Residential Solar</title>
-        <meta
-          name="description"
-          content="Helio forecasts solar generation from 15 minutes to days ahead and automatically routes power between solar, battery, and grid."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="./logo.svg" type="image/svg+xml" />
+        <title>pragyan&apos;s corner</title>
+        <meta name="description" 
+        content="Pragyan Yadav | UConn student researching Physics and Computer Science. Interested in AI, physics, and philosophy." />
+
+        <link rel="icon" href="icon.ico" />
       </Head>
       <Layout>
         <Component {...pageProps} />

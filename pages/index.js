@@ -1,334 +1,337 @@
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
-import HeroGraphic from "../components/HeroGraphic";
-import FoundersPhoto from "../components/FoundersPhoto";
-import { IconBadge } from "../components/Icons";
+import { useState, useEffect, useRef } from "react";
+import { FaLinkedin, FaGithub, FaEnvelope, FaChevronDown } from "react-icons/fa";
 
-const solutionCards = [
-  {
-    title: "Helio Box",
-    icon: "sensor",
-    bullets: [
-      "Edge-sensor hardware on your roof",
-      "Captures hyper-local irradiance and weather data",
-      "Monitors electrical system performance in real time",
-    ],
-  },
-  {
-    title: "Helio AI",
-    icon: "ai",
-    bullets: [
-      "Transformer-based forecasting model",
-      "Predicts generation from 15 minutes to days ahead",
-      "Fuses rooftop sensors with system-level signals",
-    ],
-  },
-  {
-    title: "Helio App",
-    icon: "app",
-    bullets: [
-      "Turns predictions into routing decisions",
-      "Automates power flow between solar, battery, and grid",
-      "Guides homeowners with clear, actionable insights",
-    ],
-  },
-];
+// --- WORKING CLOUD CHAMBER SIMULATION COMPONENT ---
+const CloudChamber = () => {
+  const canvasRef = useRef(null);
 
-const howItWorksSteps = [
-  {
-    step: "01",
-    title: "Sense",
-    description: "Helio Box collects real-time environmental and electrical data from your rooftop.",
-    icon: "sensor",
-  },
-  {
-    step: "02",
-    title: "Predict",
-    description: "AI forecasts solar generation and household demand across multiple time horizons.",
-    icon: "forecast",
-  },
-  {
-    step: "03",
-    title: "Route",
-    description: "Power is automatically shifted between solar, battery, grid, and appliances.",
-    icon: "route",
-  },
-  {
-    step: "04",
-    title: "Learn",
-    description: "Anomaly detection catches shading, dirt, or degradation before they cost you.",
-    icon: "learn",
-  },
-];
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-const differentiators = [
-  {
-    title: "Real-time automated power routing",
-    description: "Not just monitoring — Helio actively shifts energy where it's needed most.",
-    icon: "route",
-  },
-  {
-    title: "Hyper-local predictive AI",
-    description: "Rooftop sensor fusion, not generic weather APIs. Forecasts tuned to your array.",
-    icon: "forecast",
-  },
-  {
-    title: "Hardware-agnostic",
-    description: "Integrates with existing inverters and batteries via API — no rip-and-replace.",
-    icon: "plug",
-  },
-  {
-    title: "Early fault detection",
-    description: "Catches shading, soiling, and degradation early — before they compound.",
-    icon: "alert",
-  },
-];
+    let animationFrameId;
+    let particles = [];
 
-const programs = [
-  {
-    title: "NSF I-Corps",
-    description: "Customer discovery and commercialization validation through the National Science Foundation program.",
-  },
-  {
-    title: "Wolfram Technology Conference, 2024",
-    description: "Presented Helio's forecasting approach to the Wolfram research community.",
-  },
-  {
-    title: "UConn CCEI Get Seeded Pitch Night",
-    description: "$500 award, Connecticut Center for Entrepreneurship & Innovation — January 2026.",
-  },
-  {
-    title: "Research Advisors",
-    description: "Dr. Diego Cerrai (Eversource Energy Center) and Dr. Yuhao Nie (solar forecasting expert).",
-  },
-];
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener("resize", resize);
+    resize();
+
+    const createTrack = () => {
+      const isAlpha = Math.random() > 0.6;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = isAlpha ? 2.6 : 6.8;
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1.0,
+        decay: isAlpha ? 0.02 : 0.045,
+        history: [],
+        isAlpha,
+      };
+    };
+
+    const render = () => {
+      ctx.fillStyle = "rgba(10, 10, 10, 0.16)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (Math.random() < 0.15) particles.push(createTrack());
+
+      particles.forEach((p, index) => {
+        p.history.push({ x: p.x, y: p.y });
+        if (p.history.length > 20) p.history.shift();
+
+        if (!p.isAlpha) {
+          p.vx += (Math.random() - 0.5) * 1.8;
+          p.vy += (Math.random() - 0.5) * 1.8;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(index, 1);
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(p.history[0].x, p.history[0].y);
+          for (let i = 1; i < p.history.length; i++) {
+            ctx.lineTo(p.history[i].x, p.history[i].y);
+          }
+          ctx.strokeStyle = p.isAlpha
+            ? `rgba(255, 255, 255, ${p.life * 0.95})`
+            : `rgba(96, 165, 250, ${p.life * 0.75})`;
+          ctx.lineWidth = p.isAlpha ? 2.8 : 1.4;
+          ctx.lineCap = "round";
+
+          ctx.shadowBlur = p.isAlpha ? 6 : 3;
+          ctx.shadowColor = p.isAlpha
+            ? "rgba(255, 255, 255, 0.4)"
+            : "rgba(37, 99, 235, 0.4)";
+
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+      });
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="w-full h-full block bg-[#0a0a0a]" />;
+};
 
 export default function Home() {
+  const [showChamberDetails, setShowChamberDetails] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+    checkDark();
+
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       <Head>
-        <title>Helio — AI-Powered Energy Intelligence for Residential Solar</title>
+        <title>pragyan yadav</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
+        <style>{`
+          @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg) translateY(-4px); }
+            25% { transform: rotate(0.8deg) translateY(-6px); }
+            75% { transform: rotate(-0.8deg) translateY(-6px); }
+          }
+          .card-wiggle:hover {
+            animation: wiggle 0.4s ease-in-out;
+            transform: translateY(-4px);
+          }
+        `}</style>
       </Head>
 
-      <div className="min-h-screen bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100 flex flex-col items-center px-6 py-20 font-['Plus_Jakarta_Sans',_sans-serif] transition-colors duration-300">
+      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-[#f2f2f3] font-['Plus_Jakarta_Sans',_sans-serif] px-6 sm:px-12 lg:px-16 py-12 sm:py-20 flex flex-col items-center selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-950 dark:selection:text-blue-200 transition-colors duration-300">
+        <main className="max-w-6xl w-full space-y-12">
 
-        {/* Main Section: Photo + Text */}
-        <div className="flex flex-col md:flex-row items-center md:items-start md:justify-center max-w-5xl w-full">
+          {/* Header Section: Image + Big Name */}
+          <div className="space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
+              {/* Profile Image */}
+              <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 border-zinc-300 dark:border-zinc-700/80 bg-zinc-100 dark:bg-zinc-900 flex-shrink-0 shadow-lg dark:shadow-2xl">
+                <Image
+                  src="/me2.jpg"
+                  alt="Pragyan Yadav"
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
 
-          {/* Clean Profile Photo */}
-          <div className="w-48 h-48 md:w-56 md:h-56 rounded-full mb-8 md:mb-0 md:mr-12 flex-shrink-0 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-            <Image
-              src="/me.jpg"
-              alt="Pragyan Yadav"
-              width={256}
-              height={256}
-              className="w-full h-full object-cover"
-              priority
-            />
-          </div>
-
-          {/* Text Content */}
-          <div className="text-center md:text-left max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-zinc-900 dark:text-white">
-              Pragyan Yadav
-            </h1>
-
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
-              Hey! I&apos;m Pragyan, 
-              studying Physics and Computer Science at the University of Connecticut. 
-              I&apos;m curious about how computation can unlock new ways of understanding the universe.
-            </p>
-
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8">
-              I am currently working with Prof. Daniel Anglés-Alcázar&apos;s{" "}
-              <a
-                href="https://angles-alcazar.physics.uconn.edu/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 font-medium hover:underline underline-offset-4 decoration-blue-600/30 dark:decoration-blue-400/30 transition-all"
-              >
-                Computational Galaxy Formation Group
-              </a>{" "}
-              at UConn on computational cosmology research, while also exploring the intersection of{" "}
-              machine learning with astrophysics. 
-              I also serve as the Director of Journalism for the{" "}
-              <a
-                href="https://uconnusj.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 font-medium hover:underline underline-offset-4 decoration-blue-600/30 dark:decoration-blue-400/30 transition-all"
-              >
-                UConn Undergraduate Science Journal
-              </a>.
-            </p>
-
-            {/* Clean Buttons Group */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <Link 
-                href="/about" 
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-medium hover:bg-zinc-800 dark:hover:bg-white hover:scale-105 transition-all duration-200 shadow-sm"
-              >
-                About Me
-              </Link>
-              <Link 
-                href="/projects" 
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-transparent border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white transition-all duration-200"
-              >
-                View Projects 
-                <FaArrowRight className="text-sm" />
-              </Link>
+              {/* Title & Tagline */}
+              <div>
+                <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-zinc-900 dark:text-white uppercase font-sans">
+                  Pragyan Yadav
+                </h1>
+                <p className="text-sm sm:text-base font-mono mt-2 tracking-tight text-zinc-600 dark:text-zinc-400">
+                  physics & cs @ uconn · computational astrophysics · explainable AI
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+
+          {/* 2-Column Split Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-14 pt-2">
+
+            {/* Left Column: Narrative with Blue Key Phrases */}
+            <div className="md:col-span-6 space-y-5 text-base sm:text-[17px] leading-[1.8] text-zinc-700 dark:text-zinc-300">
+              <p>
+                Hey! I&apos;m Pragyan, studying{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">Physics and Computer Science</span>{" "}
+                at the University of Connecticut. I&apos;m curious about how{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">computation</span>{" "}
+                can unlock new ways of understanding the universe.
+              </p>
+
+              <p>
+                Outside of research code and simulations, I&apos;m really interested in{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">film and music</span>. I also serve as the{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">Director of Journalism</span>{" "}
+                for the UConn Undergraduate Science Journal, so I get to spend a lot of time thinking about{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">science journalism</span>{" "}
+                and how we communicate technical ideas.
+              </p>
+
+              <p>
+                Lately, I&apos;ve been fascinated by the philosophy of{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">explaining emergent complex systems</span>, and I&apos;m collaborating with the UConn art department on{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">data sculpture design</span>{" "}
+                to turn physical datasets into tangible forms.
+              </p>
+
+              <p>
+                On the hardware side, I had been wanting to build a{" "}
+                <span className="text-blue-600 dark:text-blue-400 font-medium">continuous cloud chamber</span>{" "}
+                for a long time, and recently finally got it running.
+              </p>
+
+              {/* Social Links Row */}
+              <div className="flex items-center gap-6 pt-2 text-zinc-500 dark:text-zinc-400 text-xl">
+                <a
+                  href="https://github.com/ypragyan"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 hover:-translate-y-0.5 transition-all"
+                  title="GitHub"
+                >
+                  <FaGithub />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/pragyan-yadav/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 hover:-translate-y-0.5 transition-all"
+                  title="LinkedIn"
+                >
+                  <FaLinkedin />
+                </a>
+                <a
+                  href="mailto:pragyan.yadav@uconn.edu"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 hover:-translate-y-0.5 transition-all"
+                  title="Email"
+                >
+                  <FaEnvelope />
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Cards with Blue Monospace Titles */}
+            <div className="md:col-span-6 space-y-4">
+              
+              {/* RECENTLY CARD */}
+              <div className="card-wiggle p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/90 bg-zinc-50 dark:bg-[#0e0f13] hover:bg-zinc-100 dark:hover:bg-[#12141a] hover:border-zinc-400 dark:hover:border-zinc-700 transition-all duration-300 space-y-2 cursor-default shadow-sm dark:shadow-lg">
+                <div className="flex items-center gap-2 font-mono font-bold text-xs tracking-wider uppercase text-blue-600 dark:text-blue-400">
+                  <span className="text-[10px]">●</span>
+                  <span>Recently</span>
+                </div>
+                <p className="text-sm sm:text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  Completed an R&D Physics internship at Mirion Technologies developing Geant4 simulations and <span className="font-semibold text-zinc-900 dark:text-white">machine learning classifiers</span> for gamma-ray spectroscopy.
+                </p>
+              </div>
+
+              {/* NOW CARD */}
+              <div className="card-wiggle p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/90 bg-zinc-50 dark:bg-[#0e0f13] hover:bg-zinc-100 dark:hover:bg-[#12141a] hover:border-zinc-400 dark:hover:border-zinc-700 transition-all duration-300 space-y-2 cursor-default shadow-sm dark:shadow-lg">
+                <div className="flex items-center gap-2 font-mono font-bold text-xs tracking-wider uppercase text-blue-600 dark:text-blue-400">
+                  <span className="text-[10px]">▲</span>
+                  <span>Now</span>
+                </div>
+                <p className="text-sm sm:text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  Undergraduate researcher in the UConn Computational Galaxy Formation Lab, studying the cosmic web and cosmology with Dr. Daniel Anglés-Alcázar.
+                </p>
+              </div>
+
+              {/* READING CARD */}
+              <div className="card-wiggle p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/90 bg-zinc-50 dark:bg-[#0e0f13] hover:bg-zinc-100 dark:hover:bg-[#12141a] hover:border-zinc-400 dark:hover:border-zinc-700 transition-all duration-300 space-y-2 cursor-default shadow-sm dark:shadow-lg">
+                <div className="flex items-center gap-2 font-mono font-bold text-xs tracking-wider uppercase text-blue-600 dark:text-blue-400">
+                  <span className="text-[10px]">◆</span>
+                  <span>Reading</span>
+                </div>
+                <p className="text-sm sm:text-base leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  <span className="italic">Sculpting in Time</span> by Andrei Tarkovsky and keeping up with recent AI preprints.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Interactive Cloud Chamber Frame + Story Toggle */}
+          <div className="pt-10 border-t border-zinc-200 dark:border-zinc-800/80 space-y-4">
+            <div className="flex items-center justify-between text-xs font-mono text-zinc-500">
+              <span className="uppercase tracking-wider">figure 1.0 · diffusion cloud chamber</span>
+              <span className="text-blue-600 dark:text-blue-400/90">alpha & beta tracks</span>
+            </div>
+
+            {/* Canvas Box */}
+            <div className="rounded-2xl border border-zinc-300 dark:border-zinc-800/90 overflow-hidden bg-black shadow-xl">
+              <div className="w-full aspect-[16/8] sm:aspect-[21/9] relative">
+                <CloudChamber />
+                <div className="absolute inset-0 shadow-[inset_0_0_35px_rgba(0,0,0,0.7)] pointer-events-none" />
+              </div>
+              <div className="px-5 py-2.5 bg-zinc-950 border-t border-zinc-900 flex items-center justify-between text-xs font-mono text-zinc-400">
+                <span>simulating vapor supersaturation & particle ionization</span>
+                <span className="text-blue-500 font-medium">● live canvas</span>
+              </div>
+            </div>
+
+            {/* Learn More Toggle Button */}
+            <div className="pt-1">
+              <button
+                onClick={() => setShowChamberDetails(!showChamberDetails)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900/80 hover:bg-zinc-200 dark:hover:bg-zinc-800/80 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 text-xs font-mono text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200"
+              >
+                <span>{showChamberDetails ? "Hide build story" : "The story behind this build"}</span>
+                <FaChevronDown
+                  className={`text-[10px] transition-transform duration-300 ${
+                    showChamberDetails ? "rotate-180 text-blue-600 dark:text-blue-400" : ""
+                  }`}
+                />
+              </button>
+
+              {/* Collapsible Info Drawer */}
+              {showChamberDetails && (
+                <div className="mt-3 p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/90 bg-zinc-50 dark:bg-[#0e0f13] space-y-3 text-sm sm:text-base leading-relaxed text-zinc-700 dark:text-zinc-300 animate-[fadeIn_0.2s_ease-out]">
+                  <p>
+                    A diffusion cloud chamber is a particle detector that makes ionizing radiation visible to the naked eye. Chilling isopropyl alcohol vapor creates a supersaturated layer near the cold plate. When an energetic charged particle zips through, it knocks electrons off ambient vapor molecules; alcohol droplets instantly condense along that ionization trail, leaving behind a brief white track in the dark.
+                  </p>
+                  <p>
+                    I first saw one watching the TV show <em>Rocket Boys</em> and became obsessed with building my own. My first couple of attempts completely failed to form a stable vapor gradient, usually because of leaky seals or uneven cooling.
+                  </p>
+                  <p>
+                    With the support of an undergraduate supply grant at UConn and mentorship from Professor Simone Colombo in the physics department, I redesigned the chamber cooling and sealing geometry and finally got a continuous, reliable vapor zone running.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Minimal Footer */}
+          <footer className="pt-6 border-t border-zinc-200 dark:border-zinc-900 flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-600">
+            <span>pragyan yadav · storrs, ct</span>
+            <span>2026</span>
+          </footer>
+
+        </main>
       </div>
-              </Link>
-            </div>
-            <HeroGraphic />
-          </div>
-        </div>
-      </section>
-
-      {/* Problem */}
-      <section id="problem" className="bg-slate-850 text-white py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="section-label text-helio-400 mb-4">The Problem</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight leading-tight max-w-4xl">
-            Homeowners waste 20–40% of the solar energy they generate.
-          </h2>
-
-          <div className="grid sm:grid-cols-2 gap-6 mt-12">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-              <p className="text-4xl md:text-5xl font-semibold text-helio-400">$1,300–$2,000</p>
-              <p className="mt-3 text-stone-300 text-lg">lost per household, per year</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-              <p className="text-4xl md:text-5xl font-semibold text-helio-400">3M+</p>
-              <p className="mt-3 text-stone-300 text-lg">U.S. residential solar systems affected</p>
-            </div>
-          </div>
-
-          <p className="mt-10 text-stone-400 leading-relaxed max-w-3xl text-lg">
-            Production and usage don&apos;t align — power is generated when it isn&apos;t needed, and gone when it is. Homeowners export surplus at low rates and buy back from the grid at higher ones.
-          </p>
-        </div>
-      </section>
-
-      {/* Solution */}
-      <section id="solution" className="py-20 md:py-28 bg-stone-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="section-label mb-4">The Solution</p>
-          <h2 className="section-heading max-w-2xl">
-            Three layers of intelligence for every rooftop.
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-6 mt-12">
-            {solutionCards.map(({ title, icon, bullets }) => (
-              <div key={title} className="card hover:border-helio-200 hover:shadow-md transition-shadow">
-                <IconBadge name={icon} className="mb-5" />
-                <h3 className="text-xl font-semibold text-slate-850">{title}</h3>
-                <ul className="mt-4 space-y-2.5">
-                  {bullets.map((bullet) => (
-                    <li key={bullet} className="flex gap-2.5 text-sm text-slate-600 leading-relaxed">
-                      <span className="text-helio-500 mt-1 shrink-0">•</span>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 md:py-28 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="section-label mb-4">How It Works</p>
-          <h2 className="section-heading">From sensor data to smarter power flow.</h2>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-            {howItWorksSteps.map(({ step, title, description, icon }) => (
-              <div key={step} className="relative">
-                <span className="text-xs font-semibold text-helio-600 tracking-wider">{step}</span>
-                <IconBadge name={icon} className="mt-3 mb-4" />
-                <h3 className="text-lg font-semibold text-slate-850">{title}</h3>
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What Sets Helio Apart */}
-      <section id="differentiators" className="py-20 md:py-28 bg-stone-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="section-label mb-4">What Sets Helio Apart</p>
-          <h2 className="section-heading">Built for action, not just dashboards.</h2>
-
-          <div className="grid sm:grid-cols-2 gap-6 mt-12">
-            {differentiators.map(({ title, description, icon }) => (
-              <div key={title} className="card flex gap-5">
-                <IconBadge name={icon} className="shrink-0" />
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-850">{title}</h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Now */}
-      <section id="why-now" className="py-20 md:py-28 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="section-label mb-4">Why Now</p>
-          <h2 className="section-heading max-w-3xl">The timing is right for hyper-local solar intelligence.</h2>
-          <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-3xl">
-            Residential solar is growing at 25% CAGR. Utilities are rolling out time-of-use pricing and virtual power plant programs. Low-cost IoT and modern AI now make hyper-local forecasting affordable at scale — turning a research problem into a deployable product.
-          </p>
-        </div>
-      </section>
-
-      {/* Programs & Recognition */}
-      <section id="programs" className="py-20 md:py-28 bg-stone-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="section-label mb-4">Programs &amp; Recognition</p>
-          <h2 className="section-heading">Research-backed, early-stage traction.</h2>
-
-          <div className="grid lg:grid-cols-5 gap-10 mt-12 items-start">
-            <div className="lg:col-span-3 grid sm:grid-cols-2 gap-6">
-              {programs.map(({ title, description }) => (
-                <div key={title} className="card">
-                  <h3 className="text-base font-semibold text-slate-850">{title}</h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{description}</p>
-                </div>
-              ))}
-            </div>
-
-            <figure className="lg:col-span-2 card p-0 overflow-hidden">
-              <div className="aspect-[4/3]">
-                <FoundersPhoto />
-              </div>
-              <figcaption className="px-5 py-4 text-xs text-slate-500 border-t border-stone-100">
-                UConn CCEI Get Seeded Pitch Night — January 2026
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      {/* Closing CTA */}
-      <section className="py-20 md:py-24 bg-helio-700">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
-            Interested in partnering, piloting Helio, or learning more?
-          </h2>
-          <Link href="/contact" className="btn-primary mt-8 bg-white text-helio-700 hover:bg-helio-50">
-            Get in Touch
-          </Link>
-        </div>
-      </section>
     </>
   );
 }

@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default function Bookshelf() {
   const sections = [
@@ -114,7 +113,7 @@ export default function Bookshelf() {
 
   return (
     <>
-<Head>
+      <Head>
         <title>Bookshelf & Media | Pragyan Yadav</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -130,7 +129,7 @@ export default function Bookshelf() {
           {/* Big Bold Headline */}
           <header className="space-y-3 pb-8 border-b border-zinc-200 dark:border-zinc-800/80">
             <h1 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tight text-zinc-900 dark:text-white uppercase font-sans">
-              Bookshelf<span className="text-blue-600 dark:text-blue-400"></span>
+              Bookshelf<span className="text-blue-600 dark:text-blue-400">.</span>
             </h1>
             <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
               A list of video essays, blogs, films, and books that have shaped how I think.
@@ -164,8 +163,20 @@ export default function Bookshelf() {
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 hover:underline underline-offset-4 decoration-blue-500/50 transition-colors"
                           >
-                            {item.title}
-                            <FaExternalLinkAlt className="text-[10px] text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                            <span>{item.title}</span>
+                            <svg
+                              className="w-2.5 h-2.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2.5}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
                           </a>
                         ) : (
                           item.title

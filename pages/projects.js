@@ -58,6 +58,23 @@ export default function Projects() {
       tags: ["Graph Neural Networks", "Graph Theory", "Python"],
       image: "/project/graph.png",
     },
+{
+      title: "USJ",
+      subtitle: "UConn Undergraduate Science Journal",
+      role: "Director of Journalism",
+      period: "2025 - Present",
+      description:
+        "Leading the reporting, writing, and editing of student-led science journalism while building and maintaining the journal's digital platform at uconnusj.org.",
+      story:
+        "Translating complex undergraduate research into accessible, engaging science journalism requires rigorous editorial standards and a strong digital presence. As Director of Journalism, I oversee the editorial pipeline from pitch to publication—guiding writers through research, fact-checking, and revisions—while developing the uconnusj.org website to showcase our articles and reach a broader campus audience.",
+      whatIDid: [
+        "Led the reporting, writing, and editorial review process for science journalism articles covering student and faculty research at UConn.",
+        "Mentored student writers and editors on science communication, fact-checking, and narrative structure.",
+        "Designed, built, and deployed the official publication website at uconnusj.org.",
+      ],
+      tags: ["Science Journalism", "Editorial Leadership", "Web Development"],
+      image: "",
+    },
     {
       title: "helio: Solar Generation Forecasting",
       subtitle: "helio",
